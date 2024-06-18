@@ -64,7 +64,7 @@ class ORMBASE {
         return dataObject
     }
     delete(id) {
-        return id
+        return id;
     }
 }
 
