@@ -1,3 +1,4 @@
+
 /*
 CRUD    HTTP        SQL
 Create  POST        INSERT
@@ -15,9 +16,9 @@ class ORMBASE {
     getFields() {
         return this.fieldList.map(f => `\`${f}\``).join(",")
     }
-    getValues(dataObject){
-        const values = this.fieldList.map(f=> dataObject[f]);
-        return values.map(v=>`'${v}'`).join(",");
+    getValues(dataObject) {
+        const values = this.fieldList.map(f => dataObject[f]);
+        return values.map(v => `'${v}'`).join(",");
     }
     create(dataObject) {
         //add the id
@@ -27,9 +28,9 @@ class ORMBASE {
         //TODO execute sql against database
         return dataObject;
     }
-    getWhere(filterObject){
+    getWhere(filterObject) {
         const keys = Object.keys(filterObject);
-        if(keys.length === 0){
+        if (keys.length === 0) {
             return "";
         }
         const output = [];
@@ -38,16 +39,17 @@ class ORMBASE {
         }
         return "WHERE " + output.join(",");
     }
-    read(filterObject={}) { //as WHERE{
+    read(filterObject = {}) { //as WHERE{
         const sql = `SELECT * FROM \`${this.tableName}\`
         ${this.getWhere(filterObject)};`;
         console.log(sql);
-        const data = [];
-        return data
+        return sql;
+        // const data = [];
+        // return data
     }
-    getKeyValuePairs(dataObject){
+    getKeyValuePairs(dataObject) {
         const keys = Object.keys(dataObject);
-        if(keys.length === 0){
+        if (keys.length === 0) {
             return "";
         }
         const output = [];
@@ -63,14 +65,38 @@ class ORMBASE {
         console.log(sql);
         return dataObject
     }
-    delete(id) {
+    delete(id, idField = "id") { //USE TRUNCATE TO EMPTY A TABLE, or DROP TO REOVE A TABLE
+        const sql = `DELETE FROM ${this.tableName}
+        WHERE \`${idField}\` = '${id}';`;
+        console.log(sql);
         return id;
     }
 }
 
-const actor = new ORMBASE("actor", ["first_name","last_name"]);
-const fromPost = {first_name:"Kevin", last_name:"Long"};
-actor.create(fromPost);
-actor.read({first_name:"Kevin"})
-actor.update({first_name:"Ernest"} , 201, "actor_id");
 
+const actor = new ORMBASE("actor", ["first_name", "last_name"]);
+const fromPost = { first_name: "Kevin", last_name: "Long" };
+
+actor.create(fromPost);
+const sql = actor.read({ first_name: "Kevin" }); //demo using db connection to run sql
+actor.update({ first_name: "Ernest" }, 201, "actor_id");
+actor.delete(201, "actor_id");
+
+// var mysql = require('mysql');
+
+// var con = mysql.createConnection({ //SETUP
+//     host: "localhost",
+//     port: 3306, //default
+//     database: "sakila",
+//     user: "root",
+//     password: "S!mpl312" //NEEDS ENCRYPTION?
+// });
+
+// con.connect(function (err) { //APPLY
+//     if (err) throw err;
+//     console.log("Connected!");
+//     con.query(sql, function (err, result) { //execute/run
+//         if (err) throw err;
+//         console.log("Result: " + result);
+//     });
+// });

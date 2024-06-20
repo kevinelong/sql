@@ -1,2 +1,1 @@
- INSERT INTO `actor`(`first_name`,`last_name`)
-        VALUES('Kevin','Long');
+ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'S!mpl312';
